@@ -14,7 +14,7 @@ aws cloudformation package --template-file sam.yaml --output-template-file sam-o
 The next command should be something similar to:
 
 ```
-aws cloudformation deploy --template-file /Users/username/GitHub/aws-cognito-apigw-angular-auth/sam/sam-output.yaml --stack-name CognitoAPIGWDemo --capabilities CAPABILITY_IAM
+aws cloudformation deploy --template-file /Users/<username>/GitHub/aws-cognito-apigw-angular-auth/sam/sam-output.yaml --stack-name CognitoAPIGWDemo --capabilities CAPABILITY_IAM
 ```
 
 CloudFormation will automatically create and configure the following resources in your account:
@@ -61,7 +61,7 @@ unzip apigwsdk.zip
 
 (From Windows unzip skip the last command and unzip the SDK file manually)
 
-11. Copy the folder "/src", the file "package.json" and the folder "apiGateway-js-sdk" from step 3 to the newly created folder "aws-cognito-apigw-angular" from the last step, overwriting the existing files
+11. Copy the folder "/src" and the file "package.json" to the newly created folder "aws-cognito-apigw-angular" from the last step, overwriting the existing files
 
 12. From the folder "aws-cognito-apigw-angular" execute the following commands in a terminal:
 
