@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>API Auth Demo</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google Sign-In -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <!-- /Google Sign-In -->
+
+  <link rel="icon" type="image/x-icon" href="assets/img/logo.png">
+  
+  <script src="../node_modules/hammerjs/hammer.js"></script>
+
+  <!-- Cognito -->
+    <script src="assets/js/jsbn.js"></script>
+    <script src="assets/js/jsbn2.js"></script>
+    <script src="https://cdn.rawgit.com/bitwiseshiftleft/sjcl/master/sjcl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"></script>
+    <script src="https://cdn.rawgit.com/aws/amazon-cognito-identity-js/master/dist/aws-cognito-sdk.min.js"></script>
+    <script src="https://cdn.rawgit.com/aws/amazon-cognito-identity-js/master/dist/amazon-cognito-identity.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.43.0.min.js"></script>
+  <!-- /Cognito -->  
+
+  <!-- APIGW -->
+    <script src="../../apiGateway-js-sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/url-template/url-template.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script src="../../apiGateway-js-sdk/lib/apiGatewayCore/utils.js"></script>
+    <script src="../../apiGateway-js-sdk/apigClient.js"></script>
+  <!-- /APIGW -->  
+</head>
+<body>
+  <app-root>Loading...</app-root>
+</body>
+</html>

@@ -1,0 +1,595 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CognitoAPIGWAngular
+Resources:
+  CognitoUserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: CognitoAPIGWAngular
+  CognitoUserPoolClient:    
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+        ClientName: myApp
+        GenerateSecret: false
+        UserPoolId: !Ref CognitoUserPool
+  CognitoIdPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Ref AWS::StackName
+      CognitoIdentityProviders: 
+        -
+          ClientId: !Ref CognitoUserPoolClient
+          ProviderName: !GetAtt CognitoUserPool.ProviderName
+      AllowUnauthenticatedIdentities: false
+  CognitoDemoApi:
+    Type: AWS::Serverless::Api
+    Properties:
+        StageName: demo
+        DefinitionBody:
+            swagger: "2.0"
+            info:
+              version: "2017-04-26T03:23:48Z"
+              title: "CognitoAPIGWAngular"
+            basePath: "/demo"
+            schemes:
+            - "https"
+            paths:
+              /cip:
+                get:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - sigv4: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"list\",\n  \"payload\":{    \n      \"FilterExpression\" : \"userId\
+                        \ = :this_id\",\n      \"ExpressionAttributeValues\" : {\":this_id\" :\
+                        \ \"$context.identity.cognitoIdentityId\"}\n    }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                post:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - sigv4: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"create\",\n  \"payload\": {\n      \"Item\" : {\n          \"userId\"\
+                        \ : \"$context.identity.cognitoIdentityId\",\n          \"name\" : \"\
+                        $inputRoot.name\",\n          \"surname\" : \"$inputRoot.surname\",\n\
+                        \          \"email\" : \"$inputRoot.email\",\n          \"provider\" :\
+                        \ \"Cognito User Pools with Cognito Identity Federation\"\n          }\n\
+                        \  }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                options:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                        Access-Control-Allow-Methods:
+                          type: "string"
+                        Access-Control-Allow-Headers:
+                          type: "string"
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'POST,GET,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    passthroughBehavior: "when_no_match"
+                    type: "mock"
+              /cip/info:
+                get:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - myApiUsers: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"echo\",\n  \"payload\": {\n      \"Item\" : {\n          \"name\"\
+                        \ : \"$context.authorizer.claims.given_name\",\n          \"surname\"\
+                        \ : \"$context.authorizer.claims.family_name\",\n          \"email\" :\
+                        \ \"$context.authorizer.claims.email\"\n          \n          }\n  }\n\
+                        }"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                options:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                        Access-Control-Allow-Methods:
+                          type: "string"
+                        Access-Control-Allow-Headers:
+                          type: "string"
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    passthroughBehavior: "when_no_match"
+                    type: "mock"
+              /cup:
+                get:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - myApiUsers: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"list\",\n  \"payload\":{    \n      \"FilterExpression\" : \"userId\
+                        \ = :this_id\",\n      \"ExpressionAttributeValues\" : {\":this_id\" :\
+                        \ \"$context.authorizer.claims.sub\"}\n    }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                post:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - myApiUsers: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"create\",\n  \"payload\": {\n      \"Item\" : {\n          \"userId\"\
+                        \ : \"$context.authorizer.claims.sub\",\n          \"name\" : \"$context.authorizer.claims.given_name\"\
+                        ,\n          \"surname\" : \"$context.authorizer.claims.family_name\"\
+                        ,\n          \"email\" : \"$context.authorizer.claims.email\",\n     \
+                        \     \"provider\" : \"Cognito User Pools\"\n          }\n  }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                options:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                        Access-Control-Allow-Methods:
+                          type: "string"
+                        Access-Control-Allow-Headers:
+                          type: "string"
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'POST,GET,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    passthroughBehavior: "when_no_match"
+                    type: "mock"
+              /google:
+                get:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - sigv4: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"list\",\n  \"payload\":{    \n      \"FilterExpression\" : \"userId\
+                        \ = :this_id\",\n      \"ExpressionAttributeValues\" : {\":this_id\" :\
+                        \ \"$context.identity.cognitoIdentityId\"}\n    }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                post:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                  security:
+                  - sigv4: []
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "#set($inputRoot = $input.path('$'))\n{\n  \"operation\"\
+                        : \"create\",\n  \"payload\": {\n      \"Item\" : {\n          \"userId\"\
+                        \ : \"$context.identity.cognitoIdentityId\",\n          \"name\" : \"\
+                        $inputRoot.name\",\n          \"surname\" : \"$inputRoot.surname\",\n\
+                        \          \"email\" : \"$inputRoot.email\",\n          \"provider\":\
+                        \ \"Google\"\n          }\n  }\n}"
+                    uri: 
+                      Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CognitoDemoFunction.Arn}/invocations
+                    passthroughBehavior: "when_no_templates"
+                    httpMethod: "POST"
+                    contentHandling: "CONVERT_TO_TEXT"
+                    type: "aws"
+                options:
+                  consumes:
+                  - "application/json"
+                  produces:
+                  - "application/json"
+                  responses:
+                    "200":
+                      description: "200 response"
+                      schema:
+                        $ref: "#/definitions/Empty"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          type: "string"
+                        Access-Control-Allow-Methods:
+                          type: "string"
+                        Access-Control-Allow-Headers:
+                          type: "string"
+                  x-amazon-apigateway-integration:
+                    responses:
+                      default:
+                        statusCode: "200"
+                        responseParameters:
+                          method.response.header.Access-Control-Allow-Methods: "'POST,GET,OPTIONS'"
+                          method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                          method.response.header.Access-Control-Allow-Origin: "'*'"
+                    requestTemplates:
+                      application/json: "{\"statusCode\": 200}"
+                    passthroughBehavior: "when_no_match"
+                    type: "mock"
+            securityDefinitions:
+              sigv4:
+                type: "apiKey"
+                name: "Authorization"
+                in: "header"
+                x-amazon-apigateway-authtype: "awsSigv4"
+              myApiUsers:
+                type: "apiKey"
+                name: "Authorization"
+                in: "header"
+                x-amazon-apigateway-authtype: "cognito_user_pools"
+                x-amazon-apigateway-authorizer:
+                  providerARNs:
+                  - Fn::Sub: ${CognitoUserPool.Arn}
+                  type: "cognito_user_pools"
+            definitions:
+              Empty:
+                type: "object"
+                title: "Empty Schema"
+  CognitoDemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs4.3
+      CodeUri: s3://<S3 BUCKET>/lambda.zip
+      Policies: AmazonDynamoDBFullAccess
+      Environment: 
+        Variables: 
+          TABLE_NAME: !Ref Table
+      Events:
+        CipGet:
+          Type: Api
+          Properties:
+            Path: /cip
+            Method: GET
+            RestApiId: 
+                Ref: CognitoDemoApi
+        CipPost:
+          Type: Api
+          Properties:
+            Path: /cip
+            Method: POST
+            RestApiId: 
+                Ref: CognitoDemoApi
+        CipInfoGet:
+          Type: Api
+          Properties:
+            Path: /cip/info
+            Method: GET
+            RestApiId: 
+                Ref: CognitoDemoApi
+        CupGet:
+          Type: Api
+          Properties:
+            Path: /cup
+            Method: GET
+            RestApiId: 
+                Ref: CognitoDemoApi
+        CupPost:
+          Type: Api
+          Properties:
+            Path: /cup
+            Method: POST
+            RestApiId: 
+                Ref: CognitoDemoApi
+        GoogleGet:
+          Type: Api
+          Properties:
+            Path: /google
+            Method: GET
+            RestApiId: 
+                Ref: CognitoDemoApi
+        GooglePost:
+          Type: Api
+          Properties:
+            Path: /google
+            Method: POST
+            RestApiId: 
+                Ref: CognitoDemoApi
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: userId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  GoogleRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Federated: 
+                - "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: 
+                - !Ref CognitoIdPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr:
+                - "authenticated"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "CognitoAPIGWAngularGoogle"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: "execute-api:Invoke"
+                Resource: 
+                - !Join [ "/", [!Join [ ":", [ "arn:aws:execute-api",!Ref 'AWS::Region',!Ref 'AWS::AccountId',!Ref CognitoDemoApi]], "*/GET/google"]]
+                - !Join [ "/", [!Join [ ":", [ "arn:aws:execute-api",!Ref 'AWS::Region',!Ref 'AWS::AccountId',!Ref CognitoDemoApi]], "*/POST/google"]]
+  CUPGroupRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Federated: 
+                - "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud: 
+                - !Ref CognitoIdPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr:
+                - "authenticated"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "CognitoAPIGWAngularCIP"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: "execute-api:Invoke"
+                Resource: 
+                - !Join [ "/", [!Join [ ":", [ "arn:aws:execute-api",!Ref 'AWS::Region',!Ref 'AWS::AccountId',!Ref CognitoDemoApi]], "*/GET/cip"]]
+                - !Join [ "/", [!Join [ ":", [ "arn:aws:execute-api",!Ref 'AWS::Region',!Ref 'AWS::AccountId',!Ref CognitoDemoApi]], "*/POST/cip"]]
+  GoogleRoleAttach:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref CognitoIdPool
+      Roles: 
+        authenticated: !GetAtt GoogleRole.Arn
+  CognitoCIPGroup:
+    Type: "AWS::Cognito::UserPoolGroup"
+    Properties:
+        GroupName: "cip-group"
+        Precedence: 1
+        RoleArn: !GetAtt CUPGroupRole.Arn
+        UserPoolId: !Ref CognitoUserPool
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref CognitoDemoApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/demo'
+  RestApiId:
+    Description: API Gateway API ID
+    Value: !Ref CognitoDemoApi      
+  LamdbaFunction:
+    Description: Lambda Function
+    Value: !Ref CognitoDemoFunction
+  CognitoIdentityPool:
+    Description: Cognito Identity Pool
+    Value: !Ref CognitoIdPool
+  CognitoUserPool:
+    Description: Cognito User Pool
+    Value: !Ref CognitoUserPool
+  CognitoUserPoolClient:
+    Description: Cognito User Pool App
+    Value: !Ref CognitoUserPoolClient
+  CognitoIdentityAuthRole:
+    Description: Cognito Identity IAM Auth Role
+    Value: !Ref GoogleRole
+  CognitoUserPoolsGroupRole:
+    Description: Cognito User Pools IAM Group Role
+    Value: !Ref CUPGroupRole
+  DDB:
+    Description: DynamoDB Table
+    Value: !Ref Table

@@ -1,0 +1,150 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~https://fonts.googleapis.com/icon?family=Material+Icons';
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+body {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+}
+
+md-toolbar-row {
+  justify-content: space-between;
+}
+
+p {
+  margin: 16px;
+}
+
+[md-raised-button] {
+  width: 100%;
+}
+
+md-grid-list {
+  max-width: 1403px;
+  margin: 16px;
+}
+
+md-sidenav-layout {
+  height: 100vh;
+}
+
+md-sidenav {
+  width: 320px;
+}
+
+.icon-20 {
+  font-size: 20px;
+}
+
+.container {
+  margin: auto;
+  width: 95%;
+  position: absolute;
+  line-height: 95%!important;
+  min-height: 95% !important;
+  height: 95% !important;
+}
+
+.error {
+  margin: auto;
+  text-align: center;
+  width: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  border: 10px solid black;
+  text-align: center;
+  margin: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.title {
+  margin-bottom: 100%;
+  display: inline-block;
+}
+
+.radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.radio-button {
+  margin: 5px;
+}
+
+.card-header-image {
+  background-image: url("assets/img/ic_account.png");
+  background-size: cover;
+}
+
+.card-header-title {
+  margin-top: 150px;
+}
+
+.card-background{
+  background-color: lightgrey;
+}
+
+.card-container{
+  padding: 5px;
+  min-height: 80% !important;
+}
+
+.card-dimensions{
+  width: 310px;
+  height: 400px;
+}
+
+.card-dimensions-narrow{
+  width: 100px;
+  height: 400px;
+}
+
+.center{
+  text-align: center;
+  margin: auto;
+}
+
+.circle {
+  display: block;
+  background: black;
+  border-radius: 50%;
+  margin: auto;
+  height: 95px;
+  width: 95px;
+  margin: auto;
+  background: radial-gradient(circle at 25px 25px, lightgray, #000);
+}
+
+.green-circle {
+  display: block;
+  background: black;
+  border-radius: 50%;
+  margin: auto;
+  height: 95px;
+  width: 95px;
+  margin: auto;
+  background: radial-gradient(circle at 25px 25px, green, #000);
+}
+
+.red-circle {
+  display: block;
+  background: black;
+  border-radius: 50%;
+  margin: auto;
+  height: 95px;
+  width: 95px;
+  margin: auto;
+  background: radial-gradient(circle at 25px 25px, red, #000);
+}
+
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

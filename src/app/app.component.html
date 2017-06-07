@@ -1,0 +1,268 @@
+<md-toolbar color="accent">
+  <table cellspacing="0"><tr>
+    <td><a href="https://aws.amazon.com/cognito/" target="_blank"><img title="Amazon Cognito" src="../../assets/img/cognito.png"></a> 
+    <a href="https://aws.amazon.com/api-gateway/" target="_blank"><img title="Amazon API Gateway" src="../../assets/img/apigw.png"></a></td>
+  </tr></table>
+  <span>API AuthN/AuthZ Demo</span>
+  <span><img title="Amazon Web Services" src="../../assets/img/aws.png"></span>
+</md-toolbar>
+
+<md-grid-list cols="8" rowHeight="20px" gutterSize="1px">
+  <md-grid-tile colspan="3" rowspan="1" rowHeight="20px" class="center"><i class="material-icons">looks_one</i><span> Login with your IdP Credentials </span></md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="1" rowHeight="20px" class="center"><i class="material-icons">looks_two</i><span> Retrieve User Info </span></md-grid-tile>
+  <md-grid-tile colspan="1" rowspan="1" rowHeight="20px" class="center"><i class="material-icons">looks_3</i><span> Test Access </span></md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="1" rowHeight="20px" class="center"><i class="material-icons">looks_4</i><span> Verify Auth Results </span></md-grid-tile>
+</md-grid-list>
+<md-grid-list cols="8" rowHeight="375px" gutterSize="1px">
+  <md-grid-tile id="login" colspan="3" rowspan="1" >
+    <div class="container">  
+        <md-card class="card-container">
+          <md-card-header></md-card-header>
+          <md-card-content >
+            <form method="POST">
+            <div *ngIf="!disableInput; else disabled">
+              <md-input-container class="full-width">
+                <label for="userinput">User Name</label>
+                <input mdInput id="userinput" placehoder="User Name" type="text" [(ngModel)]="username" [ngModelOptions]="{standalone: true}">
+              </md-input-container>
+              <br>
+              <md-input-container class="full-width">
+                <label for="passinput">Password</label>
+                <input mdInput id="passinput" placehoder="Password" type="password" required [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
+              </md-input-container>
+            </div>
+            <md-radio-group class="radio-group" [(ngModel)]="chosenProvider" [ngModelOptions]="{standalone: true}">
+              <google-signin value="google" (click)="clearFields($event)"></google-signin>
+              <md-radio-button class="radio-button" value="cup" (click)="enableFields($event)">Cognito User Pools Standalone (JWT)</md-radio-button>
+              <md-radio-button class="radio-button" value="cip" (click)="enableFields($event)">Cognito User Pools with Identity (IAM)</md-radio-button>
+            </md-radio-group>
+          </form>
+          </md-card-content>
+          <md-card-actions>
+              <button md-raised-button color="accent" (click)="onLogin($event)" type="submit">
+                Login
+              </button>
+          </md-card-actions>
+        </md-card>
+    <br>
+    <div *ngIf="errorMessage!=null; else blank">
+      <div class="error">
+      <md-chip-list color="warn" disabled>
+        <md-chip class="error" color="warn" disabled>
+            <strong>{{errorMessage}}</strong>
+        </md-chip>
+      </md-chip-list>
+      </div>
+    </div>
+    </div>
+  </md-grid-tile>
+
+  <md-grid-tile id="userDetails" colspan="2" rowspan="1">    
+    <div *ngIf="provider!=null; else notLoggedIn" class="container">
+        <md-card class="card-container">
+          <md-card-header>
+            <div md-card-avatar class="card-header-image"></div>
+            <md-card-title>
+              <strong class="card-header-title">Authenticated with {{provider}}</strong>
+            </md-card-title>
+            <md-card-subtitle>
+              <small> Powered by Amazon Cognito and Amazon API Gateway</small>
+            </md-card-subtitle>
+          </md-card-header>
+          <hr>
+          <md-card-content>
+            <br>
+            <div *ngIf="googleConfirmed=='confirmed'">
+              <div *ngIf="googleUser==null; else googleUserData">
+              <br>
+              <button md-raised-button color="warn" (click)="userDataFromGoogle($event)" type="submit">
+                Retrieve User Info
+              </button>
+              </div>
+            </div>
+            <div *ngIf="googleConfirmed==null && user!=null">
+              <div>
+                <md-chip-list>
+                <md-chip>
+                  <br>
+                  <br>
+                  <strong>{{user.name}} {{user.surname}}</strong><br>
+                  <small><strong>Email: </strong></small><span>{{user.email}}</span><br>
+                  <small><strong>Id: </strong></small><span><small><font color="blue">{{user.userId}}</font></small></span><br>
+                  <br>
+                  <br>
+                  <br>
+                </md-chip>
+                </md-chip-list>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+    </div>
+    
+  </md-grid-tile>
+  <md-grid-tile id="buttons" colspan="1" rowspan="1" >
+    <div class="container">
+    <md-card class="card-container">
+          <md-card-header>
+            <md-card-title>
+              <strong class="card-header-title">API Resources</strong>
+            </md-card-title>
+            <md-card-subtitle>
+              <small> Endpoint Paths</small>
+            </md-card-subtitle>
+          </md-card-header>
+          <hr>
+      <md-card-content>
+        <div *ngIf="provider!=null; else disableTests">
+        <div class="center">
+          <button md-fab (click)="testGoogle($event)" type="submit">/google</button><br><br>
+          <button md-fab (click)="testUserPools($event)" type="submit">/cup</button><br><br>
+          <button md-fab (click)="testIdentityPools($event)" type="submit">/cip</button>
+        </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+  </md-grid-tile>
+
+  <md-grid-tile id="semaphore" colspan="2" rowspan="1">
+    <div class="container">
+    <md-card class="card-container">
+        <md-card-header>
+          <div class="center">
+            <md-card-title>
+                <span><strong><font color="green">Green: </font> Good!</strong> <i class="material-icons">thumb_up</i></span>
+                <span><strong><font color="red">Red: </font> Bad!</strong> <i class="material-icons">thumb_down</i></span> 
+                <br>
+                <br>
+            </md-card-title>
+            </div>
+        </md-card-header>
+        <hr>
+        <md-card-content> 
+        <div class="center">
+          <br>
+          <br>
+              <div class="center">
+                <table class="table">
+                  <tr class="card-background">
+                  <td>
+                    <div *ngIf="success; else grayCircle">
+                      <figure class="green-circle"></figure>
+                    </div>
+                  </td>                    
+                  <td>
+                    <div *ngIf="redError!=null; else grayCircle">
+                      <figure class="red-circle"></figure>
+                    </div>
+                  </td>
+                  </tr>
+                </table>
+                <div *ngIf="redError; else br">
+                <md-chip-list color="warn" disabled>
+                  <md-chip class="error" color="warn" disabled>
+                      <strong>{{redError}}</strong>
+                  </md-chip>
+                </md-chip-list>
+                </div>
+                <div *ngIf="success; else br">
+                <md-chip-list color="warn" disabled>
+                  <md-chip class="error" color="warn" disabled>
+                      <strong>{{success}}</strong>
+                  </md-chip>
+                </md-chip-list>
+                </div>
+              </div>
+        </div>
+      </md-card-content>
+    </md-card>
+    </div>
+  </md-grid-tile>
+</md-grid-list>
+
+  <ng-template #blank></ng-template>
+
+  <ng-template #disabled>
+  <!--
+  <md-input-container class="full-width">
+    <font color="gray">User Name (Disabled for Google Login)</font>
+    <input mdInput disabled id="userinput" placehoder="User Name" type="text" [(ngModel)]="username" [ngModelOptions]="{standalone: true}">
+  </md-input-container>
+  <br>
+  <md-input-container class="full-width">
+    <font color="gray">Password (Disabled for Google Login)</font>
+    <input mdInput disabled id="passinput" placehoder="Password" type="password" required [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
+  </md-input-container>
+  -->
+  <div class="center">
+    <img title="Google Plus Sign In" src="../../assets/img/googleplus.png" width="125" height="125">
+  </div>
+</ng-template>
+
+  <ng-template #notLoggedIn>
+    <div class="container" >
+        <md-card class="card-container">
+          <md-card-header md-colors="accent">
+            <div md-card-avatar class="card-header-image"></div>
+            <md-card-title>
+              <strong class="card-header-title">Not Authenticated</strong>
+            </md-card-title>
+            <md-card-subtitle>
+              <small> Powered by Amazon Cognito and Amazon API Gateway</small>
+            </md-card-subtitle>
+          </md-card-header>
+          <hr>
+          <md-card-content>
+            <br>
+            <br>
+            <br>
+            <div class="card-content">
+              <md-chip-list>
+                <md-chip>Chose your Provider on the Left and Sign In to retrieve information about the User</md-chip>
+              </md-chip-list>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+          </md-card-content>
+        </md-card>
+      </div>
+  </ng-template>
+
+  <ng-template #googleUserData>  
+    <div>
+      <md-chip-list>
+       <md-chip>
+        <br>
+        <br>
+        <strong>{{googleUser.name}} {{googleUser.surname}}</strong><br>
+        <small><strong>Email: </strong></small><span>{{googleUser.email}}</span><br>
+        <small><strong>Id: </strong></small><span><small><font color="blue">{{googleUser.userId}}</font></small></span><br>
+        <br>
+        <br>
+        <br>
+        </md-chip>
+      </md-chip-list>
+    </div>
+
+  </ng-template>
+
+  <ng-template #disableTests>
+    <div class="center">
+          <button md-fab disabled type="submit">/google</button><br><br>
+          <button md-fab disabled type="submit">/cup</button><br><br>
+          <button md-fab disabled type="submit">/cip</button>
+        </div>
+  </ng-template>
+
+  <ng-template #grayCircle>
+    <figure class="circle"></figure>
+  </ng-template>
+
+  <ng-template #br>
+  </ng-template>
+
