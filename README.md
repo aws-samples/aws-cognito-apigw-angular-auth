@@ -1,6 +1,6 @@
 # aws-cognito-apigw-angular-auth
 
-An AngularV4-based web app to demonstrate different API authentication options using Amazon Cognito and API Gateway with an AWS Lambda and Amazon DynamoDB backend that stores user details.
+A simple/sample AngularV4-based web app that demonstrates different API authentication options using Amazon Cognito and API Gateway with an AWS Lambda and Amazon DynamoDB backend that stores user details:
 
 <p align="center">
   <img src="https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2017/06/07/image009.png"  />
@@ -70,7 +70,7 @@ aws apigateway get-sdk --rest-api-id <RestApiId from CloudFormation OUTPUTS> --s
 unzip apigwsdk.zip
 ```
 
-(From Windows unzip skip the last command and unzip the SDK file manually)
+(If you are using Windows skip the last command and unzip the SDK file manually)
 
 11. Copy the folder "/src" and the file "package.json" to the newly created folder "aws-cognito-apigw-angular" from the last step, overwriting the existing files
 
