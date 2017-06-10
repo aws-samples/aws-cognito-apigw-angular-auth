@@ -5,7 +5,6 @@ let AWS = require('aws-sdk');
 let doc = require('dynamodb-doc');
 let dynamo = new doc.DynamoDB();
 
-
 let table = process.env.TABLE_NAME;
 
 /**
