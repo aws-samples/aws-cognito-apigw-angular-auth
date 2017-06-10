@@ -2,6 +2,17 @@
 
 An AngularV4-based web app to demonstrate different API authentication options using Amazon Cognito and API Gateway with an AWS Lambda and Amazon DynamoDB backend that stores user details.
 
+<p align="center">
+  <img src="https://d2908q01vomqb2.cloudfront.net/1b6453892473a467d07372d45eb05abc2031647a/2017/06/07/image009.png"  />
+</p>
+
+### Required Tools
+
+* [aws cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+* [npm](https://www.npmjs.com/)
+* [angular-cli](https://github.com/angular/angular-cli)
+
+### Instructions
 
 1. Upload the file "sam/lambda.zip" to a S3 bucket of choice and add the bucket details to the "sam/sam.yaml" SAM Template (Resources->CognitoDemoFunction->Properties->CodeUri). The bucket should be in the same region as all resources.
 
