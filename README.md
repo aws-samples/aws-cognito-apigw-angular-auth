@@ -14,6 +14,8 @@ A simple/sample AngularV4-based web app that demonstrates different API authenti
 
 ### Instructions
 
+Get started by cloning the repository then editing some files described with more detail in steps 1-4:
+
 1. Upload the file "sam/lambda.zip" to a S3 bucket of choice and add the bucket details to the "sam/sam.yaml" SAM Template (Resources->CognitoDemoFunction->Properties->CodeUri). The bucket should be in the same region as all resources.
 
 2. Package the template with the following command and execute the resulting 'aws cloudformation deploy' output using the AWS CLI:
@@ -72,9 +74,9 @@ unzip apigwsdk.zip
 
 (If you are using Windows skip the last command and unzip the SDK file manually)
 
-11. Copy the folder "/src" and the file "package.json" to the newly created folder "aws-cognito-apigw-angular" from the last step, overwriting the existing files
+11. Copy the folder "/src" that contains the modified file "aws.service.ts" mentioned on step 4 with all the AWS resources identifiers and the file "package.json" in the root folder to the newly created folder "aws-cognito-apigw-angular" from the last step, overwriting the existing files
 
-12. From the folder "aws-cognito-apigw-angular" execute the following commands in a terminal:
+12. From the new folder "aws-cognito-apigw-angular" execute the following commands in a terminal:
 
 ```
 npm install 
