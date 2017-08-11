@@ -34,7 +34,7 @@ export class AppComponent {
 
   constructor(public awsService:AwsService){
   }
-  
+
   setToken(token){
     this.token=token;
     localStorage.setItem("token", token);
@@ -98,8 +98,8 @@ export class AppComponent {
   userDataFromUserPools(){
     this.awsService.postInfoApiUserPools(this.token)
       .subscribe(user => {
-        //this.user = user;
-        //console.log(user);
+        // for authorizer test in APIGW Console
+        console.log(user);
         console.log("POST with JWT to API Gateway");
       },
       error =>  this.errorMessage = <any>error);
@@ -177,7 +177,7 @@ export class AppComponent {
       }
       this.provider = "Google";
       this.googleConfirmed = "confirmed";
-    } 
+    }
   }
 
   googleCallbackWithData(data: any){

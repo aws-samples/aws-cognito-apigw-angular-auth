@@ -39,11 +39,17 @@ CloudFormation will automatically create and configure the following resources i
 * Lambda Function
 * DynamoDB Table
 
-3. Generate a Google API ID following the instructions on http://docs.aws.amazon.com/cognito/latest/developerguide/google.html 
+After the stack completes, the following command will show you the Outputs:
+
+```
+aws cloudformation describe-stacks --query 'Stacks[0].[Outputs[].[OutputKey,OutputValue]]|[]' --output text --stack-name CognitoAPIGWDemo
+```
+
+3. Generate a Google API ID following the instructions on http://docs.aws.amazon.com/cognito/latest/developerguide/google.html
 
 4. Go to the CloudFormation console, select the stack created on item 2 and open the OUTPUTS tab. All resources we'll need will be there. Use the information to fill up the details under RESOURCE IDENTIFIERS of the file "src/aws.service.ts" including the region.
 
-5. Go to the Cognito Console, select the Identity Pool created by CloudFormation and click on EDIT IDENTITY POOL. 
+5. Go to the Cognito Console, select the Identity Pool created by CloudFormation and click on EDIT IDENTITY POOL.
 
 6. Go to the AUTENTICATION PROVIDERS section, select the tab GOOGLE+, click on the UNLOCK button and add the details on the Google API ID generated on step 4. Save the changes.
 
@@ -79,7 +85,7 @@ unzip apigwsdk.zip
 12. From the new folder "aws-cognito-apigw-angular" execute the following commands in a terminal:
 
 ```
-npm install 
+npm install
 npm start
 ```
 
