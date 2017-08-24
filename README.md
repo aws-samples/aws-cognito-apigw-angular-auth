@@ -43,7 +43,7 @@ CloudFormation will automatically create and configure the following resources i
 
 4. Go to the CloudFormation console, select the stack created on item 2 and open the OUTPUTS tab. All resources we'll need will be there. Use the information to fill up the details under RESOURCE IDENTIFIERS of the file "src/aws.service.ts" including the region.
 
-5. Go to the Cognito Console, select the Identity Pool created by CloudFormation and click on EDIT IDENTITY POOL. 
+5. Go to the Cognito Console, select the Identity Pool created by CloudFormation under FEDERATED IDENTITIES and click on EDIT IDENTITY POOL. 
 
 6. Go to the AUTENTICATION PROVIDERS section, select the tab GOOGLE+, click on the UNLOCK button and add the details on the Google API ID generated on step 4. Save the changes.
 
