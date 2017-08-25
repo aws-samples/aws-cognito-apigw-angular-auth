@@ -47,7 +47,7 @@ aws cloudformation describe-stacks --query 'Stacks[0].[Outputs[].[OutputKey,Outp
 
 3. Generate a Google API ID following the instructions on http://docs.aws.amazon.com/cognito/latest/developerguide/google.html 
 
-4. Go to the CloudFormation console, select the stack created on item 2 and open the OUTPUTS tab. All resources we'll need will be there. Use the information to fill up the details under RESOURCE IDENTIFIERS of the file "src/app/aws.service.ts" including the region.
+4. Either refer to the output of the "describe-stacks" command above or go to the CloudFormation console, select the stack created on item 2 and open the OUTPUTS tab. All resources we'll need will be there. Use the information to fill up the details under RESOURCE IDENTIFIERS of the file "src/app/aws.service.ts" including the region.
 
 5. Go to the Cognito Console, select the Identity Pool created by CloudFormation under FEDERATED IDENTITIES and click on EDIT IDENTITY POOL. 
 
