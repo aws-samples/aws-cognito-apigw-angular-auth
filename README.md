@@ -39,6 +39,12 @@ CloudFormation will automatically create and configure the following resources i
 * Lambda Function
 * DynamoDB Table
 
+After the stack completes, the following command will show you the Outputs:
+
+```
+aws cloudformation describe-stacks --query 'Stacks[0].[Outputs[].[OutputKey,OutputValue]]|[]' --output text --stack-name CognitoAPIGWDemo
+```
+
 3. Generate a Google API ID following the instructions on http://docs.aws.amazon.com/cognito/latest/developerguide/google.html 
 
 4. Go to the CloudFormation console, select the stack created on item 2 and open the OUTPUTS tab. All resources we'll need will be there. Use the information to fill up the details under RESOURCE IDENTIFIERS of the file "src/app/aws.service.ts" including the region.
