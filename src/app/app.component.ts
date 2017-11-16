@@ -112,6 +112,7 @@ export class AppComponent {
   }
 
   testGoogle(){
+    this.awsService.getgoogleData(this);
     this.redError=null;
     this.success=null;
     let provider="google";
