@@ -71,7 +71,7 @@ aws cognito-idp sign-up \
 10. Create a new "aws-cognito-apigw-angular" project folder by executing the following commands from a terminal in a host on which you want to run the application:
 
 ```
-npm install -g @angular/cli
+npm install -g @angular/cli@1.0.0
 ng new aws-cognito-apigw-angular
 cd aws-cognito-apigw-angular
 aws apigateway get-sdk --rest-api-id <RestApiId from CloudFormation OUTPUTS> --stage-name demo --sdk-type javascript apigwsdk.zip
