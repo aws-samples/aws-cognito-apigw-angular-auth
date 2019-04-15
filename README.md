@@ -102,3 +102,6 @@ npm start
 * The Cognito User Pools user without any group membership should only be able to access the API resource /cup
 
 
+## License Summary
+
+This sample code is made available under the MIT-0 license. See the LICENSE file.
